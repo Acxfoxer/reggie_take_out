@@ -87,7 +87,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     public boolean deleteByIdsWithFlavor(Long[] ids){
         //创建条件构造器
         LambdaQueryWrapper<DishFlavor> lqw  =new LambdaQueryWrapper<>();
-        lqw.in(DishFlavor::getDishId, (Object) ids);
+        lqw.in(DishFlavor::getDishId, ids);
         //根据id批量删除DishFlavor的数据
         dishFlavorService.remove(lqw);
         //删除Dish表中的数据
