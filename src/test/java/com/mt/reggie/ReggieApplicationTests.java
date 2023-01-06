@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @SpringBootTest
@@ -39,6 +41,6 @@ public class ReggieApplicationTests {
         UUID uuid = UUID.randomUUID();
         String name = uuid+"张三";
         System.out.println("名字为:{}"+name);
-
+        Map<String,String> map = new HashMap<>();
     }
 }
