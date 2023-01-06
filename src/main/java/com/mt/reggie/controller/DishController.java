@@ -16,11 +16,13 @@ import com.mt.reggie.service.DishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,11 +35,14 @@ public class DishController {
     private final DishFlavorService dishFlavorService;
 
     @Autowired//注解可以省略
-    public DishController(DishService dishService, CategoryService categoryService, DishFlavorService dishFlavorService) {
+    public DishController(DishService dishService, CategoryService categoryService, DishFlavorService dishFlavorService, RedisTemplate<Object, Object> redisTemplate) {
         this.dishService = dishService;
         this.categoryService = categoryService;
         this.dishFlavorService = dishFlavorService;
+        this.redisTemplate = redisTemplate;
     }
+
+    private final RedisTemplate<Object,Object> redisTemplate;
     private DishDto dto;
 
     //分页
@@ -77,6 +82,11 @@ public class DishController {
     @PostMapping
     public R<String> add(@RequestBody DishDto dto){
         boolean flag = dishService.saveWithFlavor(dto);
+        //删除所有菜品缓存数据
+        Set<Object> keys = redisTemplate.keys("dish*");
+        if(keys!=null){
+            redisTemplate.delete(keys);
+        }
         return flag?R.success("添加成功"):R.error("添加失败");
     }
 
@@ -87,9 +97,16 @@ public class DishController {
         return R.success(dto);
     }
 
-    //套餐管理的添加菜品功能
+    //查询菜品
     @GetMapping("/list")
     public  R<List<DishDto>> listById(Dish dish){
+        //动态构造key
+        String key = "dish_" + dish.getCategoryId() + "_" + dish.getStatus();
+        //先从缓存中获取数据
+        List<DishDto> dishDto = (List<DishDto>)redisTemplate.opsForValue().get(key);
+        if(dishDto!=null){
+            return R.success(dishDto);
+        }
         //创建查询条件构造器
         LambdaQueryWrapper<Dish> lqw = new LambdaQueryWrapper<>();
         lqw.eq(dish.getCategoryId()!=null,Dish::getCategoryId,dish.getCategoryId());
@@ -111,6 +128,8 @@ public class DishController {
             }
             return dto;
         }).collect(Collectors.toList());
+        //redis不存在,查询完毕后将数据存入redis
+        redisTemplate.opsForValue().set(key,dishDtoList,30, TimeUnit.MINUTES);
         return R.success(dishDtoList);
     }
 
@@ -118,6 +137,11 @@ public class DishController {
     @PutMapping
     public R<String> update(@RequestBody DishDto dto){
         boolean flag = dishService.updateWithFlavor(dto);
+        //删除所有菜品缓存数据
+        Set<Object> keys = redisTemplate.keys("dish*");
+        if(keys!=null){
+            redisTemplate.delete(keys);
+        }
         return flag?R.success("编辑成功"):R.error("编辑失败");
     }
 
@@ -125,6 +149,11 @@ public class DishController {
     @DeleteMapping
     public R<String> delete(Long[] ids){
         dishService.deleteByIdsWithFlavor(ids);
+        //删除所有菜品缓存数据
+        Set<Object> keys = redisTemplate.keys("dish*");
+        if(keys!=null){
+            redisTemplate.delete(keys);
+        }
         return R.success("删除成功");
     }
 
@@ -133,7 +162,7 @@ public class DishController {
     public R<String> updateByIdS(@PathVariable("status")Integer status,Long[]ids){
         //创建更新条件构造器
         LambdaUpdateWrapper<Dish> lqw = new LambdaUpdateWrapper<>();
-        lqw.in(Dish::getId,ids).set(Dish::getStatus,status);
+        lqw.in(Dish::getId, (Object) ids).set(Dish::getStatus,status);
         boolean flag = dishService.update(lqw);
         return flag?R.success("编辑成功"):R.error("编辑失败");
     }
