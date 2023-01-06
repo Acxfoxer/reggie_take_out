@@ -83,6 +83,11 @@
             <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
             <version>2.2.1</version>
         </dependency>
+        <!--引入spring Data Redis依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
 
     </dependencies>
     <build>
