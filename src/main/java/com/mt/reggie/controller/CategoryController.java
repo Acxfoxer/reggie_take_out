@@ -8,6 +8,8 @@ import com.mt.reggie.entity.Category;
 import com.mt.reggie.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +18,14 @@ import java.util.List;
 @RequestMapping("/category")
 @Slf4j
 public class CategoryController {
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
+
+    private final RedisTemplate<Object,Object> redisTemplate;
+
+    public CategoryController(CategoryService categoryService, RedisTemplate redisTemplate) {
+        this.categoryService = categoryService;
+        this.redisTemplate = redisTemplate;
+    }
 
     //新增菜品分类
     @PostMapping
@@ -62,6 +70,7 @@ public class CategoryController {
     }
 
     //查询分类数据
+    @Cacheable(value = "category",key = "#p0.type")
     @GetMapping("/list")
     public R<List<Category>> list(Category category){
         //创建条件构造器对象

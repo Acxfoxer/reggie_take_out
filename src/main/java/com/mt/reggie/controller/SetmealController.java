@@ -13,6 +13,9 @@ import com.mt.reggie.service.CategoryService;
 import com.mt.reggie.service.SetmealService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +31,7 @@ public class SetmealController {
     private CategoryService categoryService;
 
     //分页
+    @Cacheable(value = "setmealCache",key = "#page+'_'+#pageSize+'_'+#name")
     @GetMapping("/page")
     public R<IPage<SetmealDto>> page(int page,int pageSize,String name){
         //创建封装分页数据的对象
@@ -59,6 +63,7 @@ public class SetmealController {
     }
 
     //新增套餐
+    @CacheEvict(value = "setmealCache",allEntries = true)
     @PostMapping
     public R<String> add(@RequestBody SetmealDto setmealDto){
         setmealService.saveWithDish(setmealDto);
@@ -74,6 +79,7 @@ public class SetmealController {
 
     //编辑当前套餐信息功能
     @PutMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> update(@RequestBody SetmealDto setmealDto){
         boolean flag = setmealService.updateWithDish(setmealDto);
         return flag?R.success("修改成功"):R.error("修改失败");
@@ -81,6 +87,7 @@ public class SetmealController {
 
     //批量删除,删除功能
     @DeleteMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> delete(@RequestParam("ids") List<Long> ids){
         boolean flag = setmealService.deleteWithDish(ids);
         return flag?R.success("删除成功"):R.error("删除失败");
@@ -100,10 +107,10 @@ public class SetmealController {
 
     /**
      *
-     * @param setmeal
-     * @return
+     * @param setmeal 接受前端参数
      */
     //套餐展示
+    @Cacheable(value = "setmealCache",key = "#setmeal.categoryId+'_'+#setmeal.name")
     @GetMapping("/list")
     public R<List<Setmeal>> list(Setmeal setmeal){
         //创建条件构造器
