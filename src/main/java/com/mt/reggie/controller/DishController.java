@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,8 @@ public class DishController {
     private final DishFlavorService dishFlavorService;
 
     @Autowired//注解可以省略
-    public DishController(DishService dishService, CategoryService categoryService, DishFlavorService dishFlavorService, RedisTemplate<Object, Object> redisTemplate) {
+    public DishController(DishService dishService, CategoryService categoryService, DishFlavorService dishFlavorService,
+                          RedisTemplate<Object, Object> redisTemplate) {
         this.dishService = dishService;
         this.categoryService = categoryService;
         this.dishFlavorService = dishFlavorService;
@@ -52,7 +54,6 @@ public class DishController {
     //分页
     @ApiOperation("分页")
     @GetMapping("/page")
-    @Cacheable(value = "dishCache",key = "#page+'_'+#pageSize+'_'+#name")
     public R<IPage<DishDto>> page(int page,int pageSize,String name){
         //创建封装分页数据对象
         IPage<Dish> page1 = new Page<>(page,pageSize);
@@ -91,10 +92,10 @@ public class DishController {
     public R<String> add(@RequestBody DishDto dto){
         boolean flag = dishService.saveWithFlavor(dto);
         //删除所有菜品缓存数据
-        Set<Object> keys = redisTemplate.keys("dish*");
+        /*Set<Object> keys = redisTemplate.keys("dish_*");
         if(keys!=null){
             redisTemplate.delete(keys);
-        }
+        }*/
         return flag?R.success("添加成功"):R.error("添加失败");
     }
 
@@ -140,26 +141,28 @@ public class DishController {
     //修改菜品
     @ApiOperation("修改菜品")
     @PutMapping
+    @CacheEvict(value = "dishCache",allEntries = true)
     public R<String> update(@RequestBody DishDto dto){
         boolean flag = dishService.updateWithFlavor(dto);
         //删除所有菜品缓存数据.
-        Set<Object> keys = redisTemplate.keys("dish_*");
+       /* Set<Object> keys = redisTemplate.keys("dish_*");
         if(keys!=null){
             redisTemplate.delete(keys);
-        }
+        }*/
         return flag?R.success("编辑成功"):R.error("编辑失败");
     }
 
     //删除菜品,批量删除菜品
     @ApiOperation("批量删除")
     @DeleteMapping
+    @CacheEvict(value = "dishCache",allEntries = true)
     public R<String> delete(Long[] ids){
         dishService.deleteByIdsWithFlavor(ids);
         //删除所有菜品缓存数据
-        Set<Object> keys = redisTemplate.keys("dish_*");
+        /*Set<Object> keys = redisTemplate.keys("dish_*");
         if(keys!=null){
             redisTemplate.delete(keys);
-        }
+        }*/
         return R.success("删除成功");
     }
 

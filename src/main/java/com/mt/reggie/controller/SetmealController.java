@@ -32,7 +32,6 @@ public class SetmealController {
     private CategoryService categoryService;
 
     //分页
-    @Cacheable(value = "setmealCache",key = "#page+'_'+#pageSize+'_'+#name")
     @GetMapping("/page")
     @ApiOperation("分页查询接口")
     public R<IPage<SetmealDto>> page(int page,int pageSize,String name){
