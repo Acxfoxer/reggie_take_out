@@ -13,6 +13,8 @@ import com.mt.reggie.entity.DishFlavor;
 import com.mt.reggie.service.CategoryService;
 import com.mt.reggie.service.DishFlavorService;
 import com.mt.reggie.service.DishService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/dish")
 @Slf4j
+@Api(tags="菜品相关接口")
 public class DishController {
     private final DishService dishService;
     private final CategoryService categoryService;
@@ -47,6 +50,7 @@ public class DishController {
     private DishDto dto;
 
     //分页
+    @ApiOperation("分页")
     @GetMapping("/page")
     @Cacheable(value = "dishCache",key = "#page+'_'+#pageSize+'_'+#name")
     public R<IPage<DishDto>> page(int page,int pageSize,String name){
@@ -81,6 +85,7 @@ public class DishController {
     }
 
     //增加菜品
+    @ApiOperation("增加功能")
     @PostMapping
     @CacheEvict(value = "dishCache",key ="'dish_' + #dto.getCategoryId()+'_1'" )
     public R<String> add(@RequestBody DishDto dto){
@@ -94,6 +99,7 @@ public class DishController {
     }
 
     //根据id查询控制回显
+    @ApiOperation("回显功能")
     @GetMapping("/{id}")
     public R<DishDto> getById(@PathVariable("id") long id){
         DishDto dto = dishService.getByIdWithFlavor(id);
@@ -101,6 +107,7 @@ public class DishController {
     }
 
     //查询菜品
+    @ApiOperation("根据分类查询菜品")
     @Cacheable(value = "dishCache",key ="'dish_' + #dish.getCategoryId() +'_'+ #dish.getStatus()" )
     @GetMapping("/list")
     public  R<List<DishDto>> listById(Dish dish){
@@ -131,6 +138,7 @@ public class DishController {
     }
 
     //修改菜品
+    @ApiOperation("修改菜品")
     @PutMapping
     public R<String> update(@RequestBody DishDto dto){
         boolean flag = dishService.updateWithFlavor(dto);
@@ -143,6 +151,7 @@ public class DishController {
     }
 
     //删除菜品,批量删除菜品
+    @ApiOperation("批量删除")
     @DeleteMapping
     public R<String> delete(Long[] ids){
         dishService.deleteByIdsWithFlavor(ids);
@@ -155,6 +164,7 @@ public class DishController {
     }
 
     //批量更改菜品状态
+    @ApiOperation("批量更改菜品售卖状态")
     @PostMapping("/status/{status}")
     @CacheEvict(value = "dishCache",allEntries = true)
     public R<String> updateByIdS(@PathVariable("status")Integer status,Long[]ids){

@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mt.reggie.common.R;
 import com.mt.reggie.entity.Category;
 import com.mt.reggie.service.CategoryService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/category")
 @Slf4j
+@Api(tags = "菜品分类相关接口")
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -28,6 +31,7 @@ public class CategoryController {
     }
 
     //新增菜品分类
+    @ApiOperation("新增菜品")
     @PostMapping
     public R<String> add(@RequestBody Category category){
         boolean flag = categoryService.save(category);
@@ -35,6 +39,7 @@ public class CategoryController {
     }
 
     //分页操作
+    @ApiOperation("分页")
     @GetMapping("/page")
     public R<IPage<Category>> page(int page,int pageSize){
         //创建封装分页数据对象
@@ -48,6 +53,7 @@ public class CategoryController {
     }
 
     //修改分类
+    @ApiOperation("修改")
     @PutMapping
     public R<String> update(@RequestBody Category category){
         boolean flag = categoryService.updateById(category);
@@ -55,12 +61,14 @@ public class CategoryController {
     }
 
     //删除分类
+    @ApiOperation("删除")
     @DeleteMapping
     public R<String> delete(Long id){
         categoryService.remove(id);
         return R.success("删除分类成功");
     }
     //根据id查询分类数据
+    @ApiOperation("根据id查询")
     @GetMapping("/{id}")
     public R<Category> getById(@PathVariable("id") Long id){
         //输出日志
@@ -70,6 +78,7 @@ public class CategoryController {
     }
 
     //查询分类数据
+    @ApiOperation("查询分类数据")
     @Cacheable(value = "category",key = "#p0.type")
     @GetMapping("/list")
     public R<List<Category>> list(Category category){

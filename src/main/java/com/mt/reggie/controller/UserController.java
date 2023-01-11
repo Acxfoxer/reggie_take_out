@@ -8,6 +8,8 @@ import com.mt.reggie.service.UserService;
 import com.mt.reggie.utils.SMSUtils;
 import com.mt.reggie.utils.UserNameGenerateUtils;
 import com.mt.reggie.utils.ValidateCodeUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,12 +24,14 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/user")
 @Slf4j
+@Api(tags = "手机端用户登录接口")
 public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
     private RedisTemplate<Object,Object> redisTemplate;
 
+    @ApiOperation("验证码接口")
     @PostMapping("/sendMsg")
     public R<String> sendMsg(HttpServletRequest request,@RequestBody User user){
         //获取手机号
@@ -48,6 +52,7 @@ public class UserController {
         return R.error("短信发送失败");
     }
 
+    @ApiOperation("登录")
     @PostMapping("/login")
     public R<User> login(HttpServletRequest request,@RequestBody Map map){
         log.info(map.toString());
@@ -99,10 +104,10 @@ public class UserController {
         return R.error("登录失败");
     }
 
-    //根据id查询表
+    //根据id查询
+    @ApiOperation("根据id查询")
     @GetMapping
     public R<User> getById(String phone){
-        System.out.println("123141415125151");
         //创建条件构造器
         LambdaQueryWrapper<User> lqw = new LambdaQueryWrapper<>();
         lqw.eq(phone!=null,User::getPhone,phone);

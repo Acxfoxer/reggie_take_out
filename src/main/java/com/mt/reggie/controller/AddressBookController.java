@@ -6,6 +6,8 @@ import com.mt.reggie.common.BaseContext;
 import com.mt.reggie.common.R;
 import com.mt.reggie.entity.AddressBook;
 import com.mt.reggie.service.AddressBookService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/addressBook")
+@Api(tags = "地址相关接口")
 public class AddressBookController {
     /**
      * controller主要开发的功能:
@@ -33,6 +36,7 @@ public class AddressBookController {
     private AddressBookService addressBookService;
 
     //新增地址
+    @ApiOperation("新增地址")
     @PostMapping
     public R<AddressBook> save(@RequestBody AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId());
@@ -42,6 +46,7 @@ public class AddressBookController {
     }
 
     //设置默认地址
+    @ApiOperation("设置默认地址")
     @PutMapping("/default")
     public R<AddressBook> updateDefault(@RequestBody AddressBook addressBook){
         //创建更新条件构造器
@@ -55,6 +60,7 @@ public class AddressBookController {
     }
 
     //查询登录用户全部的地址
+    @ApiOperation("设置所有地址")
     @GetMapping("/list")
     public R<List<AddressBook>> list(AddressBook addressBook){
         //设置地址表的用户id
@@ -73,6 +79,7 @@ public class AddressBookController {
     }
 
     //根据id查询地址
+    @ApiOperation("根据id查询地址地址")
     @GetMapping("/{id}")
     public R<AddressBook> getById(@PathVariable("id")Long id){
         AddressBook addressBook = addressBookService.getById(id);
@@ -80,6 +87,7 @@ public class AddressBookController {
     }
 
     //查询默认地址
+    @ApiOperation("查询默认地址")
     @GetMapping("/default")
     public R<AddressBook> getDefault(){
         //创建条件构造器
@@ -94,6 +102,7 @@ public class AddressBookController {
     }
 
     //修改地址信息
+    @ApiOperation("修改默认地址")
     @PutMapping
     public R<String> update(@RequestBody AddressBook addressBook){
         boolean flag = addressBookService.updateById(addressBook);

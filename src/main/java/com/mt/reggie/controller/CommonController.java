@@ -1,6 +1,8 @@
 package com.mt.reggie.controller;
 
 import com.mt.reggie.common.R;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,10 +22,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/common")
 @Slf4j
+@Api(tags ="上传下载接口")
 public class CommonController {
     @Value("${reggie.path}")
     private String basePath;
 
+    @ApiOperation("上传功能")
     @PostMapping("/upload")
     public R<String> upload(MultipartFile file){
         //file是一个临时文件，需要转存到指定位置，否则本次请求完成后临时文件会删除
@@ -56,24 +60,21 @@ public class CommonController {
      * @param name 文件名
      * @param response 响应参数
      */
+    @ApiOperation("下载")
     @GetMapping("/download")
     public void download(String name, HttpServletResponse response){
         try {
             //输入流，通过输入流读取文件内容
             FileInputStream fileInputStream = new FileInputStream(new File(basePath + name));
-
             //输出流，通过输出流将文件写回浏览器
             ServletOutputStream outputStream = response.getOutputStream();
-
             response.setContentType("image/jpeg");
-
             int len = 0;
             byte[] bytes = new byte[1024];
             while ((len = fileInputStream.read(bytes)) != -1){
                 outputStream.write(bytes,0,len);
                 outputStream.flush();
             }
-
             //关闭资源
             outputStream.close();
             fileInputStream.close();

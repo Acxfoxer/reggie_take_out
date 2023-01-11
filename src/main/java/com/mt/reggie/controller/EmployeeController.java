@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mt.reggie.common.R;
 import com.mt.reggie.entity.Employee;
 import com.mt.reggie.service.EmployeeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
@@ -21,11 +23,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/employee")
+@Api(tags = "登录相关接口")
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
     //登录操作
+    @ApiOperation("登录")
     @PostMapping("/login")
     public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee){
         //根据传递过来的信息,先判断姓名在不在数据库
@@ -54,6 +58,7 @@ public class EmployeeController {
     }
 
     //退出操作
+    @ApiOperation("退出")
     @PostMapping("/logout")
     public R<String> logout(HttpServletRequest request){
         //删掉保存在localStorage里面的用户id
@@ -63,6 +68,7 @@ public class EmployeeController {
 
 
     //添加员工
+    @ApiOperation("添加员工信息")
     @PostMapping
     public R<String> add(HttpServletRequest request,@RequestBody Employee employee){
         LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
@@ -88,6 +94,7 @@ public class EmployeeController {
     }
 
     //分页查询
+    @ApiOperation("分页查询")
     @GetMapping("/page")
     public R<IPage<Employee>> page(int page,int pageSize,String name){
         log.info("page = {},pageSize = {},name = {}" ,page,pageSize,name);
@@ -100,6 +107,7 @@ public class EmployeeController {
     }
 
     //数据回显的根据ID查询
+    @ApiOperation("根据id查询")
     @GetMapping("/{id}")
     public R<Employee> getById(@PathVariable("id") long id){
         Employee employee = employeeService.getById(id);
@@ -107,6 +115,7 @@ public class EmployeeController {
     }
 
     //编辑员工信息
+    @ApiOperation("编辑员工信息")
     @PutMapping
     public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
         log.info(employee.toString());
@@ -118,6 +127,7 @@ public class EmployeeController {
     }
 
     //删除员工信息
+    @ApiOperation("删除员工信息")
     @DeleteMapping
     public R<String> delete(@RequestParam("id") Long id){
         //创建条件查询器

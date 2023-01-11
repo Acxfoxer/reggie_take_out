@@ -1,6 +1,7 @@
 package com.mt.reggie.common;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @Component
+@Api("自定义元数据处理器")
 //自定义元数据对象处理器
 public class MyMetaObjectHandler implements MetaObjectHandler {
     //添加时,属性自动填充

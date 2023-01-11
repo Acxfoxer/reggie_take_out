@@ -1,6 +1,7 @@
 package com.mt.reggie.config;
 
 import com.mt.reggie.common.MyObjectMapper;
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Configuration
 @Slf4j
+@Api("web配置")
 public class WebMvcConfig extends WebMvcConfigurationSupport {
     /*设置静态资源映射
     * */

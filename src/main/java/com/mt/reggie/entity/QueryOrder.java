@@ -1,5 +1,6 @@
 package com.mt.reggie.entity;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel("订单查询JAVABean类")
 public class QueryOrder implements Serializable {
     private static final Long SerialVersionUID = 1L;
     private Integer page; //当前页码

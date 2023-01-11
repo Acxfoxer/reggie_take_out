@@ -11,6 +11,7 @@ import com.mt.reggie.entity.Dish;
 import com.mt.reggie.entity.Setmeal;
 import com.mt.reggie.service.CategoryService;
 import com.mt.reggie.service.SetmealService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -33,6 +34,7 @@ public class SetmealController {
     //分页
     @Cacheable(value = "setmealCache",key = "#page+'_'+#pageSize+'_'+#name")
     @GetMapping("/page")
+    @ApiOperation("分页查询接口")
     public R<IPage<SetmealDto>> page(int page,int pageSize,String name){
         //创建封装分页数据的对象
         IPage<Setmeal> pageInfo = new Page<>(page,pageSize);
@@ -65,6 +67,7 @@ public class SetmealController {
     //新增套餐
     @CacheEvict(value = "setmealCache",allEntries = true)
     @PostMapping
+    @ApiOperation("新增套餐接口")
     public R<String> add(@RequestBody SetmealDto setmealDto){
         setmealService.saveWithDish(setmealDto);
         return R.success("新增成功");
@@ -80,6 +83,7 @@ public class SetmealController {
     //编辑当前套餐信息功能
     @PutMapping
     @CacheEvict(value = "setmealCache",allEntries = true)
+    @ApiOperation("修改套餐接口")
     public R<String> update(@RequestBody SetmealDto setmealDto){
         boolean flag = setmealService.updateWithDish(setmealDto);
         return flag?R.success("修改成功"):R.error("修改失败");
@@ -87,6 +91,7 @@ public class SetmealController {
 
     //批量删除,删除功能
     @DeleteMapping
+    @ApiOperation("删除接口")
     @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> delete(@RequestParam("ids") List<Long> ids){
         boolean flag = setmealService.deleteWithDish(ids);
@@ -96,6 +101,7 @@ public class SetmealController {
 
     //批量更改菜品状态
     @PostMapping("/status/{status}")
+    @ApiOperation("根据id修改套餐接口")
     public R<String> updateByIdS(@PathVariable("status")Integer status,Long[]ids){
         //创建更新条件构造器
         LambdaUpdateWrapper<Setmeal> lqw = new LambdaUpdateWrapper<>();
@@ -112,6 +118,7 @@ public class SetmealController {
     //套餐展示
     @Cacheable(value = "setmealCache",key = "#setmeal.categoryId+'_'+#setmeal.name")
     @GetMapping("/list")
+    @ApiOperation("套餐查询展示接口")
     public R<List<Setmeal>> list(Setmeal setmeal){
         //创建条件构造器
         LambdaQueryWrapper<Setmeal> lqw = new LambdaQueryWrapper<>();

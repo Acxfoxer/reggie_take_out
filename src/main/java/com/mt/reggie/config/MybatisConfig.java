@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +17,17 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
 
 @Configuration
 @Slf4j
+@EnableSwagger2
+@EnableKnife4j
 public class MybatisConfig extends WebMvcConfigurationSupport {
 
     //分页插件
@@ -48,14 +53,14 @@ public class MybatisConfig extends WebMvcConfigurationSupport {
      * @param registry //记录
      */
     @Override
+    /*
+     * 由于Swagger生成的在线文档中，涉及到很多静态资源，这些静态资源需要添加静态资源映射，否则接口文档页面无法访问。
+     * 因此需要在 WebMvcConfig类中的addResourceHandlers方法中增加如下配置。
+     * */
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         log.info("开始进行静态资源映射...");
         registry.addResourceHandler("/backend/**").addResourceLocations("classpath:/backend/");
         registry.addResourceHandler("/front/**").addResourceLocations("classpath:/front/");
-        /*
-        * 由于Swagger生成的在线文档中，涉及到很多静态资源，这些静态资源需要添加静态资源映射，否则接口文档页面无法访问。
-        * 因此需要在 WebMvcConfig类中的addResourceHandlers方法中增加如下配置。
-        * */
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
@@ -80,16 +85,17 @@ public class MybatisConfig extends WebMvcConfigurationSupport {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.itheima.reggie.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.mt.reggie.controller"))
                 .paths(PathSelectors.any())
-                .build();
+                .build().groupName("跪安!");
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("瑞吉外卖")
-                .version("1.0")
+                .version("0.8.0")
                 .description("瑞吉外卖接口文档")
+                .contact(new Contact("Giggity!", "https://github.com/Acxfoxer", "1872762974@qq.com"))
                 .build();
     }
 }

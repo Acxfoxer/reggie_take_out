@@ -1,5 +1,8 @@
 package com.mt.reggie.common;
 
+import io.swagger.annotations.Api;
+
+@Api("线程获取用户id")
 public class BaseContext {
     //创建线程局部变量对象
     private static ThreadLocal<Long> threadLocal = new ThreadLocal<>();

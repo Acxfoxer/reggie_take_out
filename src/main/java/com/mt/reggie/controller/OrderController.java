@@ -7,6 +7,8 @@ import com.mt.reggie.common.R;
 import com.mt.reggie.entity.Orders;
 import com.mt.reggie.entity.QueryOrder;
 import com.mt.reggie.service.OrdersService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/order")
+@Api(tags ="订单相关接口")
 public class OrderController {
     private  OrdersService ordersService;
     @Autowired
@@ -26,6 +29,7 @@ public class OrderController {
      * @param orders 用户订单表
      * @return 返回成功数据
      */
+    @ApiOperation("下单功能")
     @PostMapping("/submit")
     public R<String> submit(@RequestBody Orders orders){
         log.info("订单数据：{}",orders);
@@ -34,6 +38,7 @@ public class OrderController {
     }
 
     //商家后台查看订单信息
+    @ApiOperation("商家后台查看订单信息")
     @GetMapping("/page")
     public R<IPage<Orders>> page(QueryOrder queryOrder){
         //创建分页查询后的分页数据对象
@@ -51,6 +56,7 @@ public class OrderController {
     }
 
     //移动端用户界面分页查询
+    @ApiOperation("移动端用户界面分页查询")
     @GetMapping("/userPage")
     public R<IPage<Orders>> userPage(QueryOrder queryOrder){
         //创建封装分页查询数据的对象

@@ -1,5 +1,6 @@
 package com.mt.reggie.common;
 
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 @Slf4j
 @ControllerAdvice(annotations = {RestController.class, Controller.class})
 @ResponseBody
+@Api("业务异常处理")
 public class GlobalExceptionHandler {
 
     //设置异常处理办法
