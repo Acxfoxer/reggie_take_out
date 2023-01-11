@@ -14,9 +14,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 @Slf4j
 @ControllerAdvice(annotations = {RestController.class, Controller.class})
 @ResponseBody
-@Api("业务异常处理")
 public class GlobalExceptionHandler {
-
     //设置异常处理办法
     @ExceptionHandler({SQLIntegrityConstraintViolationException.class,DuplicateKeyException.class})
     public R<String> handlerException(SQLIntegrityConstraintViolationException sq){

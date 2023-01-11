@@ -2,25 +2,26 @@ package com.mt.reggie.common;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
-@ApiModel("响应结果")
+@AllArgsConstructor
+@NoArgsConstructor
 public class R<T> implements Serializable {
-    @ApiModelProperty("编码")
+
     private Integer code; //编码：1成功，0和其它数字为失败
 
-    @ApiModelProperty("错误信息")
+
     private String msg; //错误信息
 
-    @ApiModelProperty("数据")
     private T data; //数据
 
-    @ApiModelProperty("动态数据")
     private Map map = new HashMap(); //动态数据 //动态数据
 
     public static <T> R<T> success(T object) {
