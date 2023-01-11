@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +53,7 @@ public class DishController {
     //分页
     @ApiOperation("分页")
     @GetMapping("/page")
+    @Cacheable(value = "dishCache",key = "#page+'_'+#pageSize+'_'+#name")
     public R<IPage<DishDto>> page(int page,int pageSize,String name){
         //创建封装分页数据对象
         IPage<Dish> page1 = new Page<>(page,pageSize);
@@ -145,7 +145,7 @@ public class DishController {
     public R<String> update(@RequestBody DishDto dto){
         boolean flag = dishService.updateWithFlavor(dto);
         //删除所有菜品缓存数据.
-       /* Set<Object> keys = redisTemplate.keys("dish_*");
+        /*Set<Object> keys = redisTemplate.keys("dish_*");
         if(keys!=null){
             redisTemplate.delete(keys);
         }*/

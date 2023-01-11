@@ -50,7 +50,7 @@ public class LoginCheckFilter implements Filter {
                 "/doc.html",
                 "/webjars/**",
                 "/swagger-resources",
-                "/v2/api-docs"
+                "/v2/api-docs",
         };
         boolean flag = check(urls, requestURI);
         //为true，则直接放行

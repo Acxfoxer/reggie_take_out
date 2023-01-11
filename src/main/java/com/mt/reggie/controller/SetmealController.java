@@ -34,6 +34,7 @@ public class SetmealController {
     //分页
     @GetMapping("/page")
     @ApiOperation("分页查询接口")
+    @Cacheable(value = "dishCache",key = "#page+'_'+#pageSize+'_'+#name")
     public R<IPage<SetmealDto>> page(int page,int pageSize,String name){
         //创建封装分页数据的对象
         IPage<Setmeal> pageInfo = new Page<>(page,pageSize);
@@ -101,6 +102,7 @@ public class SetmealController {
     //批量更改菜品状态
     @PostMapping("/status/{status}")
     @ApiOperation("根据id修改套餐接口")
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> updateByIdS(@PathVariable("status")Integer status,Long[]ids){
         //创建更新条件构造器
         LambdaUpdateWrapper<Setmeal> lqw = new LambdaUpdateWrapper<>();
