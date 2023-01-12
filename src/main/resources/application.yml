@@ -52,4 +52,4 @@ mybatis-plus:
     banner: false
 reggie:
 #  path: D:\Normal_software\img\
-  path: usr\local\images\reggie\
+    path: /usr/local/images/reggie/
